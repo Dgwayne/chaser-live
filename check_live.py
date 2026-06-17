@@ -39,11 +39,20 @@ _HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.9",
+    # Pre-accept the cookie consent so datacenter IPs (GitHub runners) get the
+    # real watch page instead of consent.youtube.com (which omits the player
+    # response and made every channel read as "not live").
+    "Cookie": "SOCS=CAI; CONSENT=YES+1",
 }
+
+# Diagnostics surfaced in the Action log so a datacenter-IP block is obvious.
+_stats = {"fetched": 0, "player": 0, "consent": 0, "error": 0}
 
 
 def _fetch(url):
-    req = urllib.request.Request(url, headers=_HEADERS)
+    # Force US/English to avoid the EU consent interstitial.
+    sep = "&" if "?" in url else "?"
+    req = urllib.request.Request(url + sep + "hl=en&gl=US", headers=_HEADERS)
     with urllib.request.urlopen(req, timeout=20, context=_CTX) as r:
         return r.read().decode("utf-8", "ignore")
 
@@ -86,11 +95,16 @@ def _player_response(html):
 def is_live(channel_id):
     try:
         html = _fetch(f"https://www.youtube.com/channel/{channel_id}/live")
+        _stats["fetched"] += 1
+        if "consent.youtube.com" in html or "/sorry/" in html:
+            _stats["consent"] += 1
         pr = _player_response(html)
         if not pr:
             return False
+        _stats["player"] += 1
         return pr.get("videoDetails", {}).get("isLive") is True
     except Exception:
+        _stats["error"] += 1
         return False
 
 
@@ -108,6 +122,11 @@ def main():
     with open("live.json", "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
         f.write("\n")
+    print(
+        f"diagnostics: fetched={_stats['fetched']} "
+        f"got-player-response={_stats['player']} consent-page={_stats['consent']} "
+        f"errors={_stats['error']} (of {len(ids)} channels)"
+    )
     print(f"{len(live)} live: {[CHANNELS[c] for c in live]}")
 
 
