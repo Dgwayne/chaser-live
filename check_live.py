@@ -92,6 +92,9 @@ def _player_response(html):
     return None
 
 
+_debug = []  # (name, status, reason, has_video, isLive, isLiveContent)
+
+
 def is_live(channel_id):
     try:
         html = _fetch(f"https://www.youtube.com/channel/{channel_id}/live")
@@ -100,11 +103,23 @@ def is_live(channel_id):
             _stats["consent"] += 1
         pr = _player_response(html)
         if not pr:
+            _debug.append((CHANNELS[channel_id], "NO-PLAYER-RESPONSE", "", False, None, None))
             return False
         _stats["player"] += 1
-        return pr.get("videoDetails", {}).get("isLive") is True
-    except Exception:
+        ps = pr.get("playabilityStatus", {}) or {}
+        vd = pr.get("videoDetails", {}) or {}
+        _debug.append((
+            CHANNELS[channel_id],
+            ps.get("status"),
+            (ps.get("reason") or "")[:48],
+            bool(vd),
+            vd.get("isLive"),
+            vd.get("isLiveContent"),
+        ))
+        return vd.get("isLive") is True
+    except Exception as e:
         _stats["error"] += 1
+        _debug.append((CHANNELS[channel_id], "EXC", str(e)[:48], False, None, None))
         return False
 
 
@@ -127,6 +142,9 @@ def main():
         f"got-player-response={_stats['player']} consent-page={_stats['consent']} "
         f"errors={_stats['error']} (of {len(ids)} channels)"
     )
+    print("PER-CHANNEL:")
+    for row in _debug:
+        print("   ", row)
     print(f"{len(live)} live: {[CHANNELS[c] for c in live]}")
 
 
