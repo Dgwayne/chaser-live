@@ -22,6 +22,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Check chaser live status
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: python check_live.py
       - name: Commit live.json if changed
         run: |
