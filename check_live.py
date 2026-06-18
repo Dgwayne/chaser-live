@@ -47,6 +47,7 @@ CHANNELS = {
     "UCHt22CPAxP3_YDkB6iqDf5A": "Ben Holcomb",
     "UCRYYy0UrfyGmMKQDU1N1R3g": "Convective Chronicles",
     "UCZSDkxJS7PRw9V0_Sm6U7jg": "Freddy McKinney",
+    "UCcDYPpHLQu3AITH33Knghaw": "New Mexico Storm Chasing",
 }
 
 API_KEY = os.environ.get("YT_API_KEY", "").strip()
