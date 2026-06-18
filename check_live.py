@@ -123,13 +123,21 @@ def main():
         # Don't overwrite a good live.json with an empty one on an API hiccup.
         print(f"ERROR: videos.list failed: {e}", file=sys.stderr)
         sys.exit(1)
-    live = sorted({candidates[v] for v in live_vids})
+    # channel id -> its current live video id. The app embeds this specific
+    # video (the most reliable embed) rather than the legacy
+    # `live_stream?channel=` auto-follow URL, which fails for some channels
+    # (notably phone-streamed broadcasts).
+    live_videos = {}
+    for v in sorted(live_vids):
+        live_videos.setdefault(candidates[v], v)
+    live = sorted(live_videos)
 
     out = {
         "updated": datetime.datetime.now(datetime.timezone.utc)
         .isoformat(timespec="seconds")
         .replace("+00:00", "Z"),
         "live": live,
+        "liveVideos": live_videos,
     }
     with open("live.json", "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
