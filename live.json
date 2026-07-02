@@ -1,5 +1,11 @@
 {
-  "updated": "2026-07-02T18:20:44Z",
-  "live": [],
-  "liveVideos": {}
+  "updated": "2026-07-02T19:57:47Z",
+  "live": [
+    "UCuDoeT6EEdOTtuZh0s_gcpQ",
+    "UCx5ex9rJumpj-oKgVJrP4hA"
+  ],
+  "liveVideos": {
+    "UCx5ex9rJumpj-oKgVJrP4hA": "PMGjXCqaoa8",
+    "UCuDoeT6EEdOTtuZh0s_gcpQ": "Zf0IDGzCS8w"
+  }
 }
