@@ -16,14 +16,21 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      YT_API_KEY: ${{ secrets.YT_API_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Resolve main at run START. The default pins the sha from when
+          # the cron CREATED the run — under runner congestion a run can
+          # queue 10+ min, the previous run pushes live.json meanwhile,
+          # and this run then commits on a stale base and dies with
+          # "rejected (fetch first)" (the 2026-08-14 failure emails).
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Check chaser live status
-        env:
-          YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: python check_live.py
       - name: Commit live.json if changed
         run: |
@@ -32,7 +39,23 @@ jobs:
           git add live.json
           if git diff --staged --quiet; then
             echo "No change in live status."
-          else
-            git commit -m "update live status [skip ci]"
-            git push
+            exit 0
           fi
+          git commit -m "update live status [skip ci]"
+          if git push; then
+            exit 0
+          fi
+          # Push race lost anyway (something landed between checkout and
+          # push): re-derive cleanly on the true head rather than rebasing
+          # a generated file, then try once more.
+          echo "push rejected — re-deriving on current main"
+          git fetch origin main
+          git reset --hard origin/main
+          python check_live.py
+          git add live.json
+          if git diff --staged --quiet; then
+            echo "No change after re-derive."
+            exit 0
+          fi
+          git commit -m "update live status [skip ci]"
+          git push
