@@ -1,5 +1,11 @@
 {
-  "updated": "2026-09-02T14:16:15Z",
-  "live": [],
-  "liveVideos": {}
+  "updated": "2026-09-02T18:08:23Z",
+  "live": [
+    "UCPqLI_AohMn1jnFg8ocMyHA",
+    "UCb0U1g5r4kH_NDMGiGRhysA"
+  ],
+  "liveVideos": {
+    "UCPqLI_AohMn1jnFg8ocMyHA": "DHa1G9FTznc",
+    "UCb0U1g5r4kH_NDMGiGRhysA": "ThzWLx6Xg70"
+  }
 }
