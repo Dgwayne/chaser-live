@@ -29,8 +29,13 @@ import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
-# Curated chaser YouTube channel ids — keep in sync with kChasers in the app.
-CHANNELS = {
+# Roster source of truth: the cameras Worker's chasers.json (what the app's
+# Live Chasers sheet shows). Adding a chaser there badges them here too, no
+# commit needed. The dict below is only the fallback if that fetch fails.
+ROSTER_URL = "https://cameras.dgwaynes.com/v1/chasers.json"
+
+# Fallback roster — keep in sync with kChasers in the app.
+FALLBACK_CHANNELS = {
     "UCx5ex9rJumpj-oKgVJrP4hA": "Corey Gerken",
     "UCV6hWxB0-u_IX7e-h4fEBAw": "Reed Timmer",
     "UCvBVK2ymNzPLRJrgip2GeQQ": "Max Velocity",
@@ -52,6 +57,27 @@ CHANNELS = {
 }
 
 API_KEY = os.environ.get("YT_API_KEY", "").strip()
+
+
+def _load_roster():
+    """YouTube channel id -> name from the Worker roster; fallback dict on any
+    failure or an empty roster (never let a blank push wipe the check)."""
+    try:
+        data = json.loads(_get(ROSTER_URL))
+        out = {}
+        for c in data.get("chasers", []):
+            if c.get("platform") == "youtube" and isinstance(c.get("id"), str):
+                out[c["id"]] = c.get("name") or c["id"]
+        if out:
+            print(f"roster: {len(out)} YouTube channels from {ROSTER_URL}")
+            return out
+    except Exception as e:
+        print(f"WARN: roster fetch failed ({e}); using fallback list",
+              file=sys.stderr)
+    return dict(FALLBACK_CHANNELS)
+
+
+CHANNELS = {}
 
 # Newest few RSS entries to consider per channel. A live stream is normally the
 # #1 entry; a small margin guards against a fresh upload sitting above it.
@@ -108,6 +134,7 @@ def main():
               file=sys.stderr)
         sys.exit(1)
 
+    CHANNELS.update(_load_roster())
     ids = list(CHANNELS)
     # 1. Gather candidate (recent) video ids per channel, in parallel.
     with ThreadPoolExecutor(max_workers=8) as ex:
