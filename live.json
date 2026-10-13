@@ -1,15 +1,5 @@
 {
-  "updated": "2026-10-13T18:32:13Z",
-  "live": [
-    "UCNPvoDpoOWevcdTHr8GyTyA",
-    "UCSQH3qItz0gZ5oXw8cSNR2w",
-    "UCT5dQKGCCPHntzKaN2LD7eA",
-    "UCrjOcYPOIo9u3IQKiwEJZXA"
-  ],
-  "liveVideos": {
-    "UCT5dQKGCCPHntzKaN2LD7eA": "DZVNPCs4iW4",
-    "UCNPvoDpoOWevcdTHr8GyTyA": "JUk7ZT-io6c",
-    "UCSQH3qItz0gZ5oXw8cSNR2w": "SPaRdyWVnqA",
-    "UCrjOcYPOIo9u3IQKiwEJZXA": "hejWVUrVYAo"
-  }
+  "updated": "2026-10-13T23:28:01Z",
+  "live": [],
+  "liveVideos": {}
 }
