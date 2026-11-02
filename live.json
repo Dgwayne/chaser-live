@@ -1,5 +1,21 @@
 {
-  "updated": "2026-11-02T08:23:51Z",
-  "live": [],
-  "liveVideos": {}
+  "updated": "2026-11-02T19:01:42Z",
+  "live": [
+    "UC2VTVJzqyFLZOJX9vkjdnBg",
+    "UC6lUxl1KxmI7TWnAA6go1EQ",
+    "UCPqLI_AohMn1jnFg8ocMyHA",
+    "UCSQH3qItz0gZ5oXw8cSNR2w",
+    "UCWMRFAo3Cvd7W8yQpQwsOQA",
+    "UCrjOcYPOIo9u3IQKiwEJZXA",
+    "UCx5ex9rJumpj-oKgVJrP4hA"
+  ],
+  "liveVideos": {
+    "UCSQH3qItz0gZ5oXw8cSNR2w": "8gqo1lh9kh0",
+    "UCPqLI_AohMn1jnFg8ocMyHA": "AJge78Oubh0",
+    "UCWMRFAo3Cvd7W8yQpQwsOQA": "Fds2JlVvVKw",
+    "UCx5ex9rJumpj-oKgVJrP4hA": "KZ3H5crVFIo",
+    "UCrjOcYPOIo9u3IQKiwEJZXA": "MPe93sXV2Fc",
+    "UC2VTVJzqyFLZOJX9vkjdnBg": "mcwX6Tnec-w",
+    "UC6lUxl1KxmI7TWnAA6go1EQ": "tmZGX8mxCl4"
+  }
 }
